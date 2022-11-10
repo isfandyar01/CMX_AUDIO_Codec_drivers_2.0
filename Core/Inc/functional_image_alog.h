@@ -20,7 +20,7 @@ void enable_codec_boot_control_gpios();
 
 void set_boot_en1_en2_high();
 void set_boot_en1_en2_low();
-
+void set_boot_en1_en2_for_serial_mem();
 
 fi_error_check Write_block();
 

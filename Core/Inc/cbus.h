@@ -60,14 +60,15 @@ static inline FlagStatus CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_TypeDef *SPI_PORT) {
 	return (SPI_PORT->SR & (1 << 0)) ? SET : RESET;
 }
 
-static inline uint16_t CBUS_ReceiveFrame(SPI_TypeDef *SPI_PORT) {
-	uint16_t RX_data;
-	return RX_data =(uint16_t)(SSP_DR_BITMASK(*((volatile uint8_t*) &(SPI_PORT->DR))));
+/*static inline uint8_t CBUS_ReceiveFrame(SPI_TypeDef *SPI_PORT) {
+	uint8_t RX_data;
+    //return (uint16_t)(SSP_DR_BITMASK(*((volatile uint8_t*) &(SPI_PORT->DR))));
 	//return RX_data=SPI_PORT->DR;
-
+	return RX_data=(uint8_t)SPI_PORT->DR;
 	//return (uint16_t) (SSP_DR_BITMASK(SPI_PORT->DR));
 }
-
+*/
+uint16_t CBUS_ReceiveFrame(SPI_TypeDef *SPI_PORT);
 
 static inline void CBUS_SendFrame(SPI_TypeDef *SPI_PORT, uint8_t tx_data)
 {

@@ -20,6 +20,8 @@
 #include "main.h"
 #include "CODEC_REG.h"
 #include "cbus.h"
+#include "functional_image_alog.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -57,14 +59,17 @@ static void MX_LPUART1_UART_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
 static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
-
+void INPUT_CODEC_REG_SET();
+void OUTPUT_CODEC_RED_SET();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint16_t array[512];
+
+
 /* USER CODE END 0 */
- uint16_t *pointtoarray=array;
+uint16_t *pointtoarray=array;
 /**
   * @brief  The application entry point.
   * @retval int
@@ -73,9 +78,9 @@ uint16_t array[512];
 int main(void)
 {
 	/* USER CODE BEGIN 1 */
-
+  char check[5];
 	/* USER CODE END 1 */
-	//uint16_t size_of_array = sizeof(array)/sizeof(array[0]);
+
 	/* MCU Configuration--------------------------------------------------------*/
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -102,7 +107,8 @@ int main(void)
 
 
 
-
+	enable_codec_boot_control_gpios();
+	set_boot_en1_en2_high();
 	Cbus_Config(SPI3);
     CBUS_ENABLE(SPI3);
 	CBUS_CHIP_SElECT_HIGH();
@@ -112,41 +118,26 @@ int main(void)
 
 	HAL_Delay(100);
 	CBUS_CHIP_SElECT_LOW();
-	CbusWriteRegister(SPI3, MODE, 0x0210); //0024
+	General_Reset_to_CMX72619();
 	CBUS_CHIP_SElECT_HIGH();
 	HAL_Delay(50);
-
 	CBUS_CHIP_SElECT_LOW();
-	CbusWriteRegister(SPI3, Input_type, 0x0124); //0024
+
+	if(Read_audio_fifo_out_level_reg_for_3_device_check_word()){
+		check[5]="ok";
+	}
+	else{
+		check[5]="nook";
+	}
 	CBUS_CHIP_SElECT_HIGH();
 	HAL_Delay(50);
-
 	CBUS_CHIP_SElECT_LOW();
-	CbusWriteRegister(SPI3, Output_type, 0x0124); //0024
-	CBUS_CHIP_SElECT_HIGH();
-	HAL_Delay(50);
-
-	CBUS_CHIP_SElECT_LOW();
-	CbusWriteRegister(SPI3, MODE, 0x0212); //0222
-	CBUS_CHIP_SElECT_HIGH();
-	HAL_Delay(50);
-
-	CBUS_CHIP_SElECT_LOW();
-	CbusWriteRegister(SPI3,ANAIN_Coarse_GAIN, 0x0500); //0A66
-	CBUS_CHIP_SElECT_HIGH();
-	HAL_Delay(50);
-
-
-	CBUS_CHIP_SElECT_LOW();
-	CbusWriteRegister(SPI3, ANAIN_Config, 0x0A09); //0A66
-	CBUS_CHIP_SElECT_HIGH();
-	HAL_Delay(50);
-
-	CBUS_CHIP_SElECT_LOW();
-	CbusWriteRegister(SPI3,Fine_Gain_Channel_1, 0x0080); //0A66
-	CBUS_CHIP_SElECT_HIGH();
-	HAL_Delay(50);
-
+	if(Write_block()){
+		check[5]="ok";
+	}
+	else{
+		check[5]="nook";
+	}
 
    // input codec setting end
 
@@ -154,61 +145,61 @@ int main(void)
 	//Cbus_Write_Word_stream(SPI3, Audio_in_fifo_data_data_word, pointtoarray,size_of_array);
 	//CBUS_CHIP_SElECT_HIGH();
    // input codec setting end
-
-
-	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
-	CbusWriteRegister(SPI3,MODE,0x0120);
-	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	//CODEC1_REG_SET();
+//	OUTPUT_CODEC_RED_SET();
+    set_boot_en1_en2_low();
+	HAL_Delay(100);
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, MODE, 0x0222); //0024
+	CBUS_CHIP_SElECT_HIGH();
 	HAL_Delay(50);
 
-
-
-	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
-	CbusWriteRegister(SPI3,Input_type,0x0124);
-	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, Input_type, 0x0024); //0024
+	CBUS_CHIP_SElECT_HIGH();
 	HAL_Delay(50);
 
-	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
-	CbusWriteRegister(SPI3,Output_type,0x0124);
-	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, Output_type, 0x0024); //0024
+	CBUS_CHIP_SElECT_HIGH();
 	HAL_Delay(50);
 
-	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
-	CbusWriteRegister(SPI3,MODE,0x0122);
-	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	//CBUS_CHIP_SElECT_LOW();
+	//CbusWriteRegister(SPI3, MODE, 0x0222); //0222
+	//CBUS_CHIP_SElECT_HIGH();
+	//HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, ANAIN_Coarse_GAIN, 0x0700); //0A66
+	CBUS_CHIP_SElECT_HIGH();
 	HAL_Delay(50);
 
-
-	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
-	CbusWriteRegister(SPI3,ANAOUT_CONFIG,0x0A66);
-	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, ANAIN_Config, 0x0A09); //0A66
+	CBUS_CHIP_SElECT_HIGH();
 	HAL_Delay(50);
 
-
-	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
-	CbusWriteRegister(SPI3,SPKR_COARSE_GAIN,0x8000);
-	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	//CBUS_CHIP_SElECT_LOW();
+	//CbusWriteRegister(SPI3, Fine_Gain_Channel_1, 0x0080); //0A66
+	//CBUS_CHIP_SElECT_HIGH();
+	//HAL_Delay(50);
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, ANAOUT_CONFIG, 0x0A66); //0A66
+	CBUS_CHIP_SElECT_HIGH();
 	HAL_Delay(50);
-
-	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
-	CbusWriteRegister(SPI3,Fine_Gain_Channel_1, 0x0090);
-	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
-	HAL_Delay(50);
-
-
 
 while (1)
-  { HAL_Delay(25);
+  { /*HAL_Delay(25);
     CBUS_CHIP_SElECT_LOW();
     Cbus_Read_Word_stream(SPI3,Audio_out_fifo_data_word,array,512);
     CBUS_CHIP_SElECT_HIGH();
 
-    HAL_Delay(20);
+    HAL_Delay(25);
 
-   CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
+    CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
     Cbus_Write_Word_stream(SPI3,Audio_in_fifo_data_word,array,512);
     CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
-
+*/
 
   }
 }
@@ -433,7 +424,84 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void CODEC1_REG_SET(){
+	HAL_Delay(100);
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, MODE, 0x0210); //0024
+	CBUS_CHIP_SElECT_HIGH();
+	HAL_Delay(50);
 
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, Input_type, 0x0124); //0024
+	CBUS_CHIP_SElECT_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, Output_type, 0x0124); //0024
+	CBUS_CHIP_SElECT_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, MODE, 0x0212); //0222
+	CBUS_CHIP_SElECT_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, ANAIN_Coarse_GAIN, 0x0500); //0A66
+	CBUS_CHIP_SElECT_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, ANAIN_Config, 0x0A09); //0A66
+	CBUS_CHIP_SElECT_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_LOW();
+	CbusWriteRegister(SPI3, Fine_Gain_Channel_1, 0x0080); //0A66
+	CBUS_CHIP_SElECT_HIGH();
+	HAL_Delay(50);
+}
+
+
+
+void OUTPUT_CODEC_RED_SET() {
+
+	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
+	CbusWriteRegister(SPI3, MODE, 0x0120);
+	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
+	CbusWriteRegister(SPI3, Input_type, 0x0124);
+	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
+	CbusWriteRegister(SPI3, Output_type, 0x0124);
+	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
+	CbusWriteRegister(SPI3, MODE, 0x0122);
+	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
+	CbusWriteRegister(SPI3, ANAOUT_CONFIG, 0x0A66);
+	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
+	CbusWriteRegister(SPI3, SPKR_COARSE_GAIN, 0x8000);
+	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	HAL_Delay(50);
+
+	CBUS_CHIP_SElECT_OUPUT_CODEC_LOW();
+	CbusWriteRegister(SPI3, Fine_Gain_Channel_1, 0x0090);
+	CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH();
+	HAL_Delay(50);
+
+}
 /* USER CODE END 4 */
 
 /**

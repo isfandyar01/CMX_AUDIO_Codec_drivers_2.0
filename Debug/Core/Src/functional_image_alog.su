@@ -1,6 +1,7 @@
 ../Core/Src/functional_image_alog.c:15:6:enable_codec_boot_control_gpios	4	static
 ../Core/Src/functional_image_alog.c:33:6:set_boot_en1_en2_high	4	static
 ../Core/Src/functional_image_alog.c:40:6:set_boot_en1_en2_low	4	static
-../Core/Src/functional_image_alog.c:47:6:General_Reset_to_CMX72619	8	static
-../Core/Src/functional_image_alog.c:54:16:Read_audio_fifo_out_level_reg_for_3_device_check_word	16	static
-../Core/Src/functional_image_alog.c:75:16:Write_block	40	static
+../Core/Src/functional_image_alog.c:46:6:set_boot_en1_en2_for_serial_mem	4	static
+../Core/Src/functional_image_alog.c:52:6:General_Reset_to_CMX72619	8	static
+../Core/Src/functional_image_alog.c:59:16:Read_audio_fifo_out_level_reg_for_3_device_check_word	16	static
+../Core/Src/functional_image_alog.c:82:16:Write_block	40	static

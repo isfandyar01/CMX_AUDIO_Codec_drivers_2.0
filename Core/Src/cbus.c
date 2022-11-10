@@ -115,11 +115,11 @@ void CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH() {
 void Cbus_Config(SPI_TypeDef *SPI_PORT) {
 
 	//// fclk mhz 40mhz /64 ///10mhz for uncompressed clean voice
-	SPI_PORT->CR1 &= ~ SPI_CR1_BR_2;
+	SPI_PORT->CR1  &= ~ SPI_CR1_BR_2;
 
 	SPI_PORT->CR1 |= SPI_CR1_BR_1;
 
-	SPI_PORT->CR1 &= ~ SPI_CR1_BR_0;
+	SPI_PORT->CR1  &= ~ SPI_CR1_BR_0;
 
 	//SPI_PORT-> mode 3
 
@@ -320,8 +320,7 @@ uint32_t CBUS_READ_TWO_WORDS(SPI_TypeDef *SPI_PORT, uint8_t addr) {
 	uint8_t address = addr;
 	uint32_t received_data;
 
-	while (CBUS_BUSY(SPI_PORT))
-		;
+	while (CBUS_BUSY(SPI_PORT));
 	while (CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT)) {
 		received_data = CBUS_ReceiveFrame(SPI_PORT); /// dump all junk data
 	}
@@ -330,26 +329,31 @@ uint32_t CBUS_READ_TWO_WORDS(SPI_TypeDef *SPI_PORT, uint8_t addr) {
 	CBUS_SendFrame(SPI_PORT, 1);
 	CBUS_SendFrame(SPI_PORT, 2);
 	__enable_irq();
-	while (!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT)); //stay here until rx fifo empty
-	received_data = CBUS_ReceiveFrame(SPI_PORT);
+    while(!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT));
+    received_data=CBUS_ReceiveFrame(SPI_PORT);
+    received_data<<=8;
+    while(!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT));
+    received_data|=CBUS_ReceiveFrame(SPI_PORT);
+    received_data<<=8;
+    while(!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT));
+    received_data |= (CBUS_ReceiveFrame(SPI_PORT) & 0xff);
+	return (uint32_t) received_data;
+
+}
+
+uint16_t CBUS_ReceiveFrame(SPI_TypeDef *SPI_PORT)
+{
+
+	    static uint16_t RX_data;
+	     return RX_data =(uint16_t)(SSP_DR_BITMASK(*((volatile uint8_t*) &(SPI_PORT->DR))));
+}
+
+/*	received_data = CBUS_ReceiveFrame(SPI_PORT);
 	received_data <<= 8;
-	while (!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT)); //stay here until rx fifo empty
+	while (!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT)); //stay here until rx fifo empty 0 equals empty
 	received_data |= (uint16_t) CBUS_ReceiveFrame(SPI_PORT) & 0xff;
 	received_data <<= 8;
 	while (!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT));
 	received_data |= (CBUS_ReceiveFrame(SPI_PORT) & 0xff);
 	return (uint32_t) received_data;
-
-}
-
-
-
-
-uint16_t Cbus_Read_Word(SPI_TypeDef * SPI_PORT ,uint8_t Addr){
-
-
-
-
-
-
-}
+*/
