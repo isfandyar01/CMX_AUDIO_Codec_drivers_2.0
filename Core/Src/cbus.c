@@ -18,16 +18,19 @@ void set_cbus_pins() {
 	// chip select PG0 chip select output
 	GPIOG->MODER |= GPIO_MODER_MODE0_0;
 	GPIOG->MODER &= ~(GPIO_MODER_MODE0_1);
+
+	GPIOG->PUPDR |= GPIO_PUPDR_PUPD0_1;
+	GPIOG->PUPDR &= ~ GPIO_PUPDR_PUPD0_0;
 	// very high speed
 	GPIOG->OSPEEDR |= GPIO_OSPEEDR_OSPEED0_1;
-	GPIOG->OSPEEDR &= ~( GPIO_OSPEEDR_OSPEED0_0);
+	GPIOG->OSPEEDR |= ( GPIO_OSPEEDR_OSPEED0_0);
 
 	// chip select PG1 chip select output
 	GPIOG->MODER |= GPIO_MODER_MODE1_0;
 	GPIOG->MODER &= ~(GPIO_MODER_MODE1_1);
 	// very high speed
 	GPIOG->OSPEEDR |= GPIO_OSPEEDR_OSPEED1_1;
-	GPIOG->OSPEEDR &= ~( GPIO_OSPEEDR_OSPEED1_0);
+	GPIOG->OSPEEDR |= ( GPIO_OSPEEDR_OSPEED1_0);
 
 	// output push pull
 	GPIOG->OTYPER |= (GPIO_OTYPER_OT_0);
@@ -100,6 +103,7 @@ void CBUS_CHIP_SElECT_LOW() {
 }
 //working
 void CBUS_CHIP_SElECT_HIGH() {
+	//GPIOG->ODR |=GPIO_ODR_OD0;
 	GPIOG->BSRR |= GPIO_BSRR_BS0;
 }
 
@@ -115,18 +119,18 @@ void CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH() {
 void Cbus_Config(SPI_TypeDef *SPI_PORT) {
 
 	//// fclk mhz 40mhz /64 ///10mhz for uncompressed clean voice
-	SPI_PORT->CR1  &= ~ SPI_CR1_BR_2;
+	SPI_PORT->CR1 &= ~ SPI_CR1_BR_2;
 
 	SPI_PORT->CR1 |= SPI_CR1_BR_1;
 
-	SPI_PORT->CR1  &= ~ SPI_CR1_BR_0;
+	SPI_PORT->CR1 &= ~ SPI_CR1_BR_0;
 
 	//SPI_PORT-> mode 3
 
 	SPI_PORT->CR1 |= SPI_CR1_CPOL | SPI_CR1_CPHA;
 
 	// FULL duplex
-	SPI_PORT->CR1 &= ~SPI_CR1_RXONLY;
+	SPI_PORT->CR1 &= ~ SPI_CR1_RXONLY;
 	// msb first
 	SPI_PORT->CR1 &= ~ SPI_CR1_LSBFIRST;
 
@@ -171,7 +175,7 @@ void CbusWriteRegister(SPI_TypeDef *SPI_PORT, uint8_t Addr, uint16_t data) ///wo
 	__enable_irq();
 	while (CBUS_BUSY(SPI_PORT)) {
 	};
-
+	__enable_irq();
 	return;
 }
 
