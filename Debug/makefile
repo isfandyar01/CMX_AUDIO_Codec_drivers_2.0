@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := spi_cbus
+BUILD_ARTIFACT_NAME := spi_cbus_codec_2.0
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-spi_cbus.elf \
+spi_cbus_codec_2.0.elf \
 
 MAP_FILES += \
-spi_cbus.map \
+spi_cbus_codec_2.0.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-spi_cbus.list \
+spi_cbus_codec_2.0.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: spi_cbus.elf secondary-outputs
+main-build: spi_cbus_codec_2.0.elf secondary-outputs
 
 # Tool invocations
-spi_cbus.elf spi_cbus.map: $(OBJS) $(USER_OBJS) D:\Rapi_dev_isf\workspaces\cubeide_workspace\spi_cbus\STM32L4A6ZGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "spi_cbus.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Rapi_dev_isf\workspaces\cubeide_workspace\spi_cbus\STM32L4A6ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="spi_cbus.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+spi_cbus_codec_2.0.elf spi_cbus_codec_2.0.map: $(OBJS) $(USER_OBJS) D:\Rapi_dev_isf\workspaces\cubeide_workspace\spi_cbus_codec_2.0\STM32L4A6ZGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "spi_cbus_codec_2.0.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Rapi_dev_isf\workspaces\cubeide_workspace\spi_cbus_codec_2.0\STM32L4A6ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="spi_cbus_codec_2.0.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-spi_cbus.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "spi_cbus.list"
+spi_cbus_codec_2.0.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "spi_cbus_codec_2.0.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout spi_cbus.elf spi_cbus.list spi_cbus.map
+	-$(RM) default.size.stdout spi_cbus_codec_2.0.elf spi_cbus_codec_2.0.list spi_cbus_codec_2.0.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

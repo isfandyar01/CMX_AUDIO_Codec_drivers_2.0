@@ -5,8 +5,22 @@
  *      Author: Isfandyar Qureshi
  */
 #include "cbus.h"
-
+#include "timer6_delay.h"
 //working
+
+
+
+void CBUS_INIT() {
+
+	// pg9 sck pg10 miso pg11 mosi pg0 cs pg0
+
+	enable_clock_gpio_spi();	//enabled G clocks // enabled SPI3 clock;
+	set_cbus_pins(); // set sck mosi miso chip select  alternate function and speed and output type
+	set_spi_portg_alternate_fun6(); //
+
+}
+
+
 void enable_clock_gpio_spi() {
 
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOGEN; //enabled G clocks
@@ -18,7 +32,7 @@ void set_cbus_pins() {
 	// chip select PG0 chip select output
 	GPIOG->MODER |= GPIO_MODER_MODE0_0;
 	GPIOG->MODER &= ~(GPIO_MODER_MODE0_1);
-
+	// pull up-down settings
 	GPIOG->PUPDR |= GPIO_PUPDR_PUPD0_1;
 	GPIOG->PUPDR &= ~ GPIO_PUPDR_PUPD0_0;
 	// very high speed
@@ -88,23 +102,17 @@ void set_spi_portg_alternate_fun6() {
 	GPIOG->AFR[1] |= (GPIO_AFRH_AFSEL11_2);
 }
 //working
-void CBUS_INIT() {
 
-	// pg9 sck pg10 miso pg11 mosi pg0 cs pg0
-
-	enable_clock_gpio_spi();	//enabled G clocks // enabled SPI3 clock;
-	set_cbus_pins(); // set sck mosi miso chip select  alternate function and speed and output type
-	set_spi_portg_alternate_fun6(); //
-
-}
 //working
 void CBUS_CHIP_SElECT_LOW() {
 	GPIOG->BSRR |= GPIO_BSRR_BR0;
+
 }
 //working
 void CBUS_CHIP_SElECT_HIGH() {
 	//GPIOG->ODR |=GPIO_ODR_OD0;
 	GPIOG->BSRR |= GPIO_BSRR_BS0;
+	Delay_US(10);
 }
 
 void CBUS_CHIP_SElECT_OUPUT_CODEC_LOW() {
@@ -113,6 +121,7 @@ void CBUS_CHIP_SElECT_OUPUT_CODEC_LOW() {
 
 void CBUS_CHIP_SElECT_OUPUT_CODEC_HIGH() {
 	GPIOG->BSRR |= GPIO_BSRR_BS1;
+	Delay_US(10);
 }
 
 // working configs cbus baud rate and other settings
@@ -310,11 +319,9 @@ uint8_t Cbus_Read_Byte(SPI_TypeDef *SPI_PORT, uint8_t Addr) {
 	CBUS_SendFrame(SPI_PORT, address);
 	CBUS_SendFrame(SPI_PORT, 1);
 	__enable_irq();
-	while (!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT))
-		; //stay here until rx fifo empty
-	received_data = CBUS_ReceiveFrame(SPI_PORT); // dump address byte junk
-//	while(!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT));//stay here until rx fifo empty
-//	received_data=CBUS_ReceiveFrame(SPI_PORT);// read actual data
+	while (!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT)); //stay here until rx fifo empty
+	received_data = CBUS_ReceiveFrame(SPI_PORT);
+
 	return received_data;
 }
 
@@ -352,12 +359,4 @@ uint16_t CBUS_ReceiveFrame(SPI_TypeDef *SPI_PORT)
 	     return RX_data =(uint16_t)(SSP_DR_BITMASK(*((volatile uint8_t*) &(SPI_PORT->DR))));
 }
 
-/*	received_data = CBUS_ReceiveFrame(SPI_PORT);
-	received_data <<= 8;
-	while (!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT)); //stay here until rx fifo empty 0 equals empty
-	received_data |= (uint16_t) CBUS_ReceiveFrame(SPI_PORT) & 0xff;
-	received_data <<= 8;
-	while (!CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT));
-	received_data |= (CBUS_ReceiveFrame(SPI_PORT) & 0xff);
-	return (uint32_t) received_data;
-*/
+

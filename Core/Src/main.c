@@ -117,11 +117,11 @@ int main(void)
 
   // input codec setting start
 
-  HAL_Delay(50);
+
 
   General_Reset_to_CMX72619();
 
-  HAL_Delay(50);
+  HAL_Delay(2);
 
   if(Read_audio_fifo_out_level_reg_for_3_device_check_word()){
     check[5]="ok";
@@ -146,21 +146,20 @@ int main(void)
   //CODEC1_REG_SET();
 //  OUTPUT_CODEC_RED_SET();
     set_boot_en1_en2_low();
-  HAL_Delay(100);
+  HAL_Delay(5);
   CBUS_CHIP_SElECT_LOW();
   CbusWriteRegister(SPI3, MODE, 0x0222); //0024
   CBUS_CHIP_SElECT_HIGH();
-  HAL_Delay(50);
+
 
   CBUS_CHIP_SElECT_LOW();
   CbusWriteRegister(SPI3, Input_type, 0x0024); //0024
   CBUS_CHIP_SElECT_HIGH();
-  HAL_Delay(50);
+
 
   CBUS_CHIP_SElECT_LOW();
   CbusWriteRegister(SPI3, Output_type, 0x0024); //0024
   CBUS_CHIP_SElECT_HIGH();
-  HAL_Delay(50);
 
   //CBUS_CHIP_SElECT_LOW();
   //CbusWriteRegister(SPI3, MODE, 0x0222); //0222
@@ -170,12 +169,12 @@ int main(void)
   CBUS_CHIP_SElECT_LOW();
   CbusWriteRegister(SPI3, ANAIN_Coarse_GAIN, 0x0700); //0A66
   CBUS_CHIP_SElECT_HIGH();
-  HAL_Delay(50);
+
 
   CBUS_CHIP_SElECT_LOW();
   CbusWriteRegister(SPI3, ANAIN_Config, 0x0A09); //0A66
   CBUS_CHIP_SElECT_HIGH();
-  HAL_Delay(50);
+
 
   //CBUS_CHIP_SElECT_LOW();
   //CbusWriteRegister(SPI3, Fine_Gain_Channel_1, 0x0080); //0A66
@@ -184,7 +183,7 @@ int main(void)
   CBUS_CHIP_SElECT_LOW();
   CbusWriteRegister(SPI3, ANAOUT_CONFIG, 0x0A66); //0A66
   CBUS_CHIP_SElECT_HIGH();
-  HAL_Delay(50);
+
 
 while (1)
   { /*HAL_Delay(25);

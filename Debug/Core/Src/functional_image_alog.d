@@ -1,5 +1,6 @@
 Core/Src/functional_image_alog.o: ../Core/Src/functional_image_alog.c \
- ../Core/Inc/functional_image_alog.h ../Core/Inc/cbus.h \
+ ../Core/Inc/functional_image_array.h ../Core/Inc/functional_image_alog.h \
+ ../Core/Inc/cbus.h \
  ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4a6xx.h \
  ../Drivers/CMSIS/Include/core_cm4.h \
  ../Drivers/CMSIS/Include/cmsis_version.h \
@@ -34,7 +35,8 @@ Core/Src/functional_image_alog.o: ../Core/Src/functional_image_alog.c \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- ../Core/Inc/CODEC_REG.h ../Core/Inc/functional_image.h
+ ../Core/Inc/CODEC_REG.h
+../Core/Inc/functional_image_array.h:
 ../Core/Inc/functional_image_alog.h:
 ../Core/Inc/cbus.h:
 ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4a6xx.h:
@@ -72,4 +74,3 @@ Core/Src/functional_image_alog.o: ../Core/Src/functional_image_alog.c \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
 ../Core/Inc/CODEC_REG.h:
-../Core/Inc/functional_image.h:

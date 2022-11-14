@@ -6,7 +6,7 @@
  */
 
 
-#include "timer4_delay.h"
+#include <timer6_delay.h>
 
 volatile int myTicks=0;
 void enable_timer6(){

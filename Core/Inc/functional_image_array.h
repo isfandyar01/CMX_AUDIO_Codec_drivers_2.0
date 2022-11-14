@@ -44,7 +44,7 @@
 /*******************************************/
 
 /*define U16 to be an unsigned 16 bit type to suit target machine*/
-
+#include "stdint.h"
 /* Data Block count */
 #define N_DB            0x03
 
