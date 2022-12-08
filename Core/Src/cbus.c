@@ -371,18 +371,11 @@ void Cbus_Read_Byte_stream(SPI_TypeDef *SPI_PORT,uint8_t Addr,uint8_t *pdata,uin
 	uint8_t wVal;
 	bool iIRQ_Disabler;
 	int iOut;
-	int iOcount;
-	int iLsb;
 	int iIn;
 
 	address = Addr;
 
-
-
-	ddress = Addr;
-
-	while (CBUS_BUSY(SPI_PORT))
-		;
+	while (CBUS_BUSY(SPI_PORT));
 	while (CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT)) // check existing data and dump it
 	{
 
@@ -393,11 +386,10 @@ void Cbus_Read_Byte_stream(SPI_TypeDef *SPI_PORT,uint8_t Addr,uint8_t *pdata,uin
 	iIRQ_Disabler = true;
 	CBUS_SendFrame(SPI_PORT, address);
 	iOut = 0;
-	iOcount = num_of_bytes_to_read << 1; /* Twice as many bytes need sending */
 	iIn = -1;
 
 	while (1) {
-		if (iOut < iOcount) {
+		if (iOut < num_of_bytes_to_read) {
 			if (CBUS_TX_BUFFER_EMPTY_CHECK(SPI_PORT)) // if tx buffer empty send frame
 					{
 
@@ -421,27 +413,23 @@ void Cbus_Read_Byte_stream(SPI_TypeDef *SPI_PORT,uint8_t Addr,uint8_t *pdata,uin
 			}
 		}
 		if (CBUS_RX_FIFO_NOT_EMPTY_CHECK(SPI_PORT)) // if not empty receive frames
-				{
+			{
 			wVal = CBUS_ReceiveFrame(SPI_PORT);
 			if (iIn >= 0) /* Reading actual data */
-			{
-				if (iLsb == 0) {
-					received_data = wVal;
-					iLsb = 1;
-				} else {
-					received_data |= wVal;
-					pdata[iIn] = received_data;
+			   {
+					pdata[iIn] = wVal;
+			   }
 					iIn += 1;
-					if (iIn >= num_of_bytes_to_read) {
+				if (iIn >= num_of_bytes_to_read) {
 						break; /* We have all the data */
 					}
-					iLsb = 0;
-				}
-			} else {
-				iIn += 1;
-			}
+				
+				
+			} 
+				
+			
 		}
-	}
+	
 
 	return;
 
@@ -452,8 +440,7 @@ void Cbus_Read_Byte_stream(SPI_TypeDef *SPI_PORT,uint8_t Addr,uint8_t *pdata,uin
 void Cbus_Write_Byte_stream(SPI_TypeDef *SPI_PORT, uint8_t Addr,uint8_t *pdata,uint16_t num_of_bytes_to_write){
 
 
-	uint8_t *pdata;
-	uint16_t num_of_bytes_to_write; 
+
 
 	uint8_t address = Addr;
 	uint16_t i = 0;
@@ -466,6 +453,7 @@ void Cbus_Write_Byte_stream(SPI_TypeDef *SPI_PORT, uint8_t Addr,uint8_t *pdata,u
 	iIrqDisabler = true;
 	CBUS_SendFrame(SPI_PORT, address);
 	for (i = 0; i < num_of_bytes_to_write; ++i) {
+		Data = (pdata[i]);
 		if (!CBUS_TX_BUFFER_EMPTY_CHECK(SPI_PORT)) {
 			if (iIrqDisabler != false) {
 				__enable_irq();
@@ -473,10 +461,8 @@ void Cbus_Write_Byte_stream(SPI_TypeDef *SPI_PORT, uint8_t Addr,uint8_t *pdata,u
 			}
 			while (!CBUS_TX_BUFFER_EMPTY_CHECK(SPI_PORT));
 		}
-
-		Data = (pdata[i]);
 		CBUS_SendFrame(SPI_PORT, Data);
-		while (!CBUS_TX_BUFFER_EMPTY_CHECK(SPI_PORT));
+		
 	}
 	if (iIrqDisabler != false) {
 		__enable_irq();
