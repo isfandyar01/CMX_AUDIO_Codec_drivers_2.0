@@ -41,11 +41,21 @@ void Cbus_Write_Word_stream(SPI_TypeDef *SPI_PORT, uint8_t Addr,uint16_t *pdata,
 
 void Cbus_Read_Word_stream(SPI_TypeDef *SPI_PORT,uint8_t Addr,uint16_t *pdata,uint16_t num_of_bytes_to_read);
 
+
+
+void Cbus_Write_Byte_stream(SPI_TypeDef *SPI_PORT, uint8_t Addr,uint8_t *pdata,uint16_t num_of_bytes_to_write);
+
+void Cbus_Read_Byte_stream(SPI_TypeDef *SPI_PORT,uint8_t Addr,uint8_t *pdata,uint16_t num_of_bytes_to_read);
+
 uint8_t Cbus_Read_Byte(SPI_TypeDef * SPI_PORT ,uint8_t Addr);
 
 uint16_t Cbus_Read_Word(SPI_TypeDef * SPI_PORT ,uint8_t Addr);
 
 void Cbus_Write_no_data(SPI_TypeDef *SPI_PORT,uint8_t addr);
+
+
+
+
 
 
 uint32_t CBUS_READ_TWO_WORDS(SPI_TypeDef *SPI_PORT,uint8_t addr);
