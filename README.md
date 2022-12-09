@@ -11,3 +11,6 @@ cbus.c file contains all the spi settings
 best spi speed is 2-4mhz 
 
 this code and operate on two codecs using single spi bus
+
+
+added byte stream read and write functions
